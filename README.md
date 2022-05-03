@@ -10,9 +10,11 @@ Download the code to your local machine. Unpack the file. Open your terminal/she
 
 `cd /example/AudioToText`
 
-Then install the required packages using pip as follow:
+Then install the required packages using `pip` as follow:
 
-`pip3 install SpeechRecognition pydub`
+```bash
+pip install SpeechRecognition pydub
+```
 
 And finally, run the `audio_text.py` file in your terminal like below:
 
