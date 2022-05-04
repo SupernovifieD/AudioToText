@@ -38,3 +38,6 @@ It will ask for the audio file path. Copy and paste it in your terminal. Bingo, 
 ## Future Developments
 - Adding support for more audio files
 - Adding video to text conversion
+
+## Current Issues
+- file conversion works just fine. But, when converted to `wav`, the file size becomes really large.
