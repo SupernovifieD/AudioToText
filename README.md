@@ -2,8 +2,15 @@
 It's a set of python scripts that working together, gives you a transcribed text file. Pretty much useful for students, or anyone who wants to extract text from an mp3 or wav file.
 
 ## Requirements
+- ‍‍`ffmpeg`
 - `pydub`
 - `speech_recognition`
+
+You have to have `ffmpeg` installed for `pydub` to work. To do so, go to their [website](https://ffmpeg.org/download.html). Or use `homebrew` to install it on your machine. Open your terminal and call brew:
+
+```bash
+brew install ffmpeg
+```
 
 ## Instructions
 Download the code to your local machine. Unpack the file. Open your terminal/shell. Navigate to the folder by typing the following in your terminal:
