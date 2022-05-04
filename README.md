@@ -18,6 +18,16 @@ pip install SpeechRecognition pydub
 
 And finally, run the `audio_text.py` file in your terminal like below:
 
-`python audio_text.py`
+```bash
+python audio_text.py
+```
 
-It will ask for the audio file path. Copy and paste it here. Bingo, now you have a file on your desktop named `Extracted Text.txt` that contains the text you were looking for. Enjoy!
+It will ask for the audio file path. Copy and paste it in your terminal. Bingo, now you have a file on your desktop named `Extracted Text.txt` that contains the text you were looking for. Enjoy!
+
+## Notes
+- Given that `SpeechRecognition` uses Google's speech recognition API, you need an active Internet connection to succeed.
+- You can manipulate the code and use other speech recognition engines available in `SpeechRecognition` package.
+
+## Future Developments
+- Adding support for more audio files
+- Adding video to text conversion
