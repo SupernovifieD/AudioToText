@@ -2,6 +2,7 @@
 It's a set of python scripts that working together, gives you a transcribed text file. Pretty much useful for students, or anyone who wants to extract text from an mp3 or wav file.
 
 ## Requirements
+This code runs on `python 3.x`. So, please first consider[ installing python](https://www.python.org/downloads/) on your local machine before continuing. Otherwise, go on and read the rest of this documentation.
 - ‍‍`ffmpeg`
 - `pydub`
 - `speech_recognition`
@@ -40,4 +41,4 @@ It will ask for the audio file path. Copy and paste it in your terminal. Bingo, 
 - Adding video to text conversion
 
 ## Current Issues
-- file conversion works just fine. But, when converted to `wav`, the file size becomes really large.
+- File conversion works just fine. But, when converted to `wav`, the file size becomes really large.
