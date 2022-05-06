@@ -12,7 +12,7 @@ def mp3_wav(path):
     source = path
 
     # create a directory to store the converted audio file
-    folder_name = "/Users/yasin/Desktop/temp_for_test"
+    folder_name = "dummy"
     if not os.path.isdir(folder_name):
         os.mkdir(folder_name)
     temp_file = os.path.join(folder_name, "temp{:-%Y%m%d%H%M%S}.wav".format(datetime.now()))

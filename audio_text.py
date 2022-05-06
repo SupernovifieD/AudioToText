@@ -3,6 +3,7 @@
 # modified it and made it more usable
 
 
+
 import speech_recognition as sr
 import os
 from pydub import AudioSegment
@@ -36,7 +37,7 @@ def extract_text(path):
                               )
 
     # create a directory to store the audio chunks
-    folder_name = "/Users/yasin/Desktop/temp_for_test"
+    folder_name = "dummy"
     if not os.path.isdir(folder_name):
         os.mkdir(folder_name)
 
@@ -61,7 +62,7 @@ def extract_text(path):
                 whole_text += text
 
     # deleting the temp folder
-    shutil.rmtree("/Users/yasin/Desktop/temp_for_test")
+    shutil.rmtree("dummy")
 
     # return the text for all chunks detected
     return whole_text
@@ -71,10 +72,10 @@ def txt_file(file_path):
     """
     this function returns a text file containing
     extracted text string from 'extract_text' function
+    and saves on user's desktop
     """
 
-    folder_name = "/Users/yasin/Desktop/"
-    output = os.path.join(folder_name, "Extracted Text.txt")
+    output = os.path.join(os.path.expanduser('~'), 'Desktop', "Extracted Text.txt")
 
     # creating a .txt file
     file = open(output, "w")
@@ -84,6 +85,7 @@ def txt_file(file_path):
     file.writelines(text)
     # closing the file
     file.close()
+    print("\033[1;31m==>", "\033[1;39mCheck out your Desktop!", "\033[1;31m<==")
 
 
 path = input("Give me the file path. ")
