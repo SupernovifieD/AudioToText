@@ -1,92 +1,94 @@
-# came along this code in below:
-# https://www.thepythoncode.com/article/using-speech-recognition-to-convert-speech-to-text-python
-# modified it and made it more usable
-
-
-
 import speech_recognition as sr
 import os
-from pydub import AudioSegment
-from pydub.silence import split_on_silence
-from mp3_wav import mp3_wav
 import shutil
+from mp3_wav import mp3_to_wav  # Assuming your conversion function is defined as mp3_to_wav_librosa
+import librosa
+import numpy as np
+import tempfile
 
-# create a speech recognition object
+
+# Initialize the speech recognition object
 r = sr.Recognizer()
 
 
-def extract_text(path):
+def extract_text(path: str) -> str:
     """
-    splitting the large audio file into chunks
-    and apply speech recognition on each of these chunks
-    then delete the chunks and only return the text
+    Converts speech in an audio file to text by splitting the audio based on silence.
+    
+    Parameters:
+        path (str): File path to the audio file to be processed.
+        
+    Returns:
+        str: The transcribed text from the audio file.
+        
+    Notes:
+        This function splits audio where silence is detected, processes each chunk
+        for speech recognition, and removes temporary files after processing.
     """
+    # Convert MP3 to WAV if needed
+    file_name = mp3_to_wav(path)
+    
+    # Load the audio with librosa
+    audio_data, sample_rate = librosa.load(file_name, sr=None)
 
-    file_name = mp3_wav(path)
-    # open the audio file using pydub
-    sound = AudioSegment.from_wav(file_name)
+    # Define silence threshold and chunking parameters
+    silence_threshold = np.mean(np.abs(audio_data)) * 0.02  # adjust based on audio
+    chunk_duration = 0.5  # seconds of silence that defines a split, adjustable
 
-    # split audio sound where silence is 700 miliseconds or more and get chunks
-    chunks = split_on_silence(sound,
-                              # experiment with this value for your target audio file
-                              min_silence_len=500,
-                              # adjust this per requirement
-                              silence_thresh=sound.dBFS - 14,
-                              # keep the silence for 1 second, adjustable as well
-                              keep_silence=500,
-                              )
+    # Split based on silence
+    non_silent_intervals = librosa.effects.split(audio_data, top_db=14)
 
-    # create a directory to store the audio chunks
-    folder_name = "dummy"
-    if not os.path.isdir(folder_name):
-        os.mkdir(folder_name)
-
+    # Prepare to store all recognized text
     whole_text = []
 
-    # process each chunk
-    for i, audio_chunk in enumerate(chunks, start=1):
-        # export audio chunk and save it in
-        # the `folder_name` directory.
-        chunk_filename = os.path.join(folder_name, f"chunk{i}.wav")
-        audio_chunk.export(chunk_filename, format="wav")
-        # recognize the chunk
-        with sr.AudioFile(chunk_filename) as source:
-            audio_listened = r.record(source)
-            # try converting it to text
-            try:
-                text = r.recognize_google(audio_listened)
-            except sr.UnknownValueError:
-                continue
-            else:
-                text = f"{text.capitalize()}."
-                whole_text += text
+    # Process each chunk
+    with tempfile.TemporaryDirectory() as folder_name:
+        for i, (start, end) in enumerate(non_silent_intervals):
+            chunk_filename = os.path.join(folder_name, f"chunk{i}.wav")
+            
+            # Export each audio chunk using librosa's write_wav
+            librosa.output.write_wav(chunk_filename, audio_data[start:end], sample_rate)
 
-    # deleting the temp folder
-    shutil.rmtree("dummy")
+            # Recognize the audio chunk
+            with sr.AudioFile(chunk_filename) as source:
+                audio_listened = r.record(source)
+                
+                # Try converting it to text
+                try:
+                    text = r.recognize_google(audio_listened)
+                except sr.UnknownValueError:
+                    continue
+                else:
+                    text = f"{text.capitalize()}."
+                    whole_text.append(text)
 
-    # return the text for all chunks detected
-    return whole_text
+    # Return the transcribed text
+    return " ".join(whole_text)
 
 
-def txt_file(file_path):
+def txt_file(file_path: str):
     """
-    this function returns a text file containing
-    extracted text string from 'extract_text' function
-    and saves on user's desktop
+    Extracts text from an audio file and saves it as a text file on the user's desktop.
+    
+    Parameters:
+        file_path (str): Path to the audio file for transcription.
+        
+    Returns:
+        None
     """
-
+    # Define output path on the Desktop
     output = os.path.join(os.path.expanduser('~'), 'Desktop', "Extracted Text.txt")
 
-    # creating a .txt file
-    file = open(output, "w")
-    # extracting text from the desired file
-    text = extract_text(path=file_path)
-    # writing to the file
-    file.writelines(text)
-    # closing the file
-    file.close()
+    # Extract text from the audio file
+    text = extract_text(file_path)
+
+    # Write to the text file
+    with open(output, "w") as file:
+        file.write(text)
+
     print("\033[1;31m==>", "\033[1;39mCheck out your Desktop!", "\033[1;31m<==")
 
 
-path = input("Give me the file path. ")
+# Prompt the user for a file path and start the transcription process
+path = input("Give me the file path: ")
 txt_file(path)
